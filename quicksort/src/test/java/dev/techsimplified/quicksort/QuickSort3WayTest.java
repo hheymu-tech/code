@@ -9,23 +9,23 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 @RunWith(JUnitPlatform.class)
-class QuickSortTest {
+class QuickSort3WayTest {
 
   /**
    * Test implementation of Quick Sort Algorithm
    *
    * @param arguments test data
    */
-  @DisplayName("QuickSort Test")
+  @DisplayName("QuickSort3Way Test")
   @ParameterizedTest(name = "Running permutation {index}")
   @ArgumentsSources({
     @ArgumentsSource(SortDataDuplicateProvider.class),
     @ArgumentsSource(SortDataOddProvider.class),
     @ArgumentsSource(SortDataEvenProvider.class)
   })
-  void quickSortTest(TestData arguments) {
+  void quickSort3WayTest(TestData arguments) {
     Integer[] input = arguments.getInput();
-    QuickSort.sort(input);
+    QuickSort3Way.sort(input);
     Assertions.assertArrayEquals(arguments.getExpectedOutput(), input);
   }
 }
