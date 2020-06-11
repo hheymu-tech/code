@@ -28,12 +28,12 @@ final class PartitionUtilities {
     while (true) {
 
       // keep incrementing leftIndex till we find a position
-      // where the element is greater than input[lo].
+      // where the element is greater than input[lo] / pivot.
       // break if we are reaching the end of array
       while (less(input, ++leftIndex, lo)) if (leftIndex == hi) break;
 
       // keep decrementing rightIndex till we find a position
-      // where the element is less than input[lo].
+      // where the element is less than input[lo] / pivot.
       // break if we are reaching the start of array
       while (less(input, lo, --rightIndex)) if (rightIndex == lo) break;
 
@@ -41,8 +41,7 @@ final class PartitionUtilities {
       // break, if the index cross
       if (leftIndex >= rightIndex) break;
 
-      // for the given partitioning element (input[lo])
-      // elements at position leftIndex & rightIndex
+      // for the given pivot elements at position leftIndex & rightIndex
       // are out of order; swap them
       exchange(input, leftIndex, rightIndex);
     }
@@ -71,13 +70,37 @@ final class PartitionUtilities {
     T v = input[lo]; // the element that we will be comparing against
     for (int i = lo; i <= gt; ) {
       int cmp = input[i].compareTo(v);
-      // current entry is less that pivot, move it to the left
+      // elements less than v (pivot), needs to be moved to the left
+      // move it to the left and increment the indices
       if (cmp < 0) exchange(input, i++, lt++);
-      // current entry is greter that pivot, move it to right
+      // elements greater than v (pivot), needs to be moved to the right
+      // move it to the right and decrement the indices
       if (cmp > 0) exchange(input, i, gt--);
-      // equal. increment index
+      // comparing element is equal to pivot.
+      // do nothing
       if (cmp == 0) i++;
     }
+    return new int[] {lt, gt}; // all entries between lt .. gt are equal.
+  }
+
+  public static <T extends Comparable<T>> int[] partition3WayDualPivot(T[] input, int lo, int hi) {
+
+    // exchange if left pivot is less than right pivot
+    if (less(input[hi], input[lo])) exchange(input, lo, hi);
+
+    int lt = lo + 1;
+    int gt = hi - 1;
+
+    for (int i = lo + 1; i <= gt; ) {
+      if (less(input[i], input[lo])) exchange(input, i++, lt++); // input less than left pivt
+      else if (less(input[hi], input[i])) exchange(input, i, gt--); // input greater then right pivt
+      else i++;
+    }
+
+    // put the partitioning pivots in place
+    exchange(input, lo, --lt);
+    exchange(input, hi, ++gt);
+
     return new int[] {lt, gt};
   }
 
@@ -106,6 +129,18 @@ final class PartitionUtilities {
    *     false} otherwise.
    */
   private static <T extends Comparable<T>> boolean less(T[] input, int idx1, int idx2) {
-    return input[idx1].compareTo(input[idx2]) < 0;
+    return less(input[idx1], input[idx2]);
+  }
+
+  /**
+   * Compare 2 elements
+   *
+   * @param t1 first element
+   * @param t2 second element
+   * @param <T> eneric object that implements/extends {@code Comparable}
+   * @return {@code true} if element {@code t1} is less than {@code t2}; {@code * false} otherwise.
+   */
+  private static <T extends Comparable<T>> boolean less(T t1, T t2) {
+    return t1.compareTo(t2) < 0;
   }
 }
